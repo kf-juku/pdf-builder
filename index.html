@@ -194,10 +194,10 @@ body{font-family:'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif;backgroun
 .cp-coltoggle button.on{background:var(--crimson-light);color:var(--crimson-dark);border-color:var(--crimson);}
 .cp-thumbs{flex:1;overflow-y:auto;padding:8px;display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--cp-lthumb,160px),1fr));gap:8px;align-content:start;}
 .cp-thumbs.cols2{grid-template-columns:1fr 1fr;gap:6px;}
-.cp-thumb{position:relative;border:2px solid var(--border);border-radius:6px;cursor:pointer;overflow:hidden;background:#fff;}
+.cp-thumb{position:relative;border:2px solid var(--border);border-radius:6px;cursor:pointer;background:#fff;align-self:start;}
 .cp-thumb:hover{border-color:var(--crimson-mid,#f4a0a5);}
 .cp-thumb.active{border-color:var(--crimson);}
-.cp-thumb canvas{display:block;width:100%;}
+.cp-thumb img{display:block;width:100%;height:auto;border-radius:4px;}
 .cp-thumb .n{position:absolute;left:0;bottom:0;background:rgba(30,41,59,.8);color:#fff;font-size:9px;padding:0 5px;border-top-right-radius:5px;}
 .cp-work{flex:1;min-width:0;display:flex;flex-direction:column;min-height:0;}
 .cp-work-bar{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--border);background:#fff;flex-shrink:0;}
@@ -1413,15 +1413,17 @@ function cropRenderThumbs(){
   var chain=Promise.resolve();
   for(var i=1;i<=_cropPageCount;i++){ (function(n){
     chain=chain.then(function(){ return _cropDoc.getPage(n).then(function(page){
-      var vp=page.getViewport({scale:0.5});
+      var vp=page.getViewport({scale:0.55});
       var cv=document.createElement('canvas'); cv.width=vp.width; cv.height=vp.height;
-      var d=document.createElement('div'); d.className='cp-thumb'; d.id='cpThumb-'+n;
-      if(n===_cropCur) d.classList.add('active');
-      d.onclick=function(){ cropSelectPage(n); };
-      d.appendChild(cv);
-      var nm=document.createElement('span'); nm.className='n'; nm.textContent=n; d.appendChild(nm);
-      box.appendChild(d);
-      return page.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;
+      return page.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise.then(function(){
+        var d=document.createElement('div'); d.className='cp-thumb'; d.id='cpThumb-'+n;
+        if(n===_cropCur) d.classList.add('active');
+        d.onclick=function(){ cropSelectPage(n); };
+        var img=document.createElement('img'); img.src=cv.toDataURL('image/png'); img.alt='ページ'+n; img.draggable=false;
+        d.appendChild(img);
+        var nm=document.createElement('span'); nm.className='n'; nm.textContent=n; d.appendChild(nm);
+        box.appendChild(d);
+      });
     }); });
   })(i); }
   return chain;
