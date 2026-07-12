@@ -996,6 +996,7 @@ function saveState(){
   }catch(e){ console.warn('save fail',e); }
 }
 var _pendingRestore=null;
+var _restoreDismissed=false;
 function checkRestore(){
   var raw=null; try{ raw=localStorage.getItem(LS_KEY); }catch(e){}
   if(!raw) return;
@@ -1005,10 +1006,11 @@ function checkRestore(){
     _pendingRestore=data;
     var names=data.files.map(function(f){return f.name;}).join('・');
     document.getElementById('restoreMsg').innerHTML='前回の作業があります：<b>'+esc(names)+'</b>（同じPDFを読み込み直すと、並び順・回転・完成版を復元します）';
-    document.getElementById('restoreBar').classList.add('show');
+    _restoreDismissed=false; updateRestoreBar();
   }catch(e){ console.warn(e); }
 }
-function dismissRestore(){ document.getElementById('restoreBar').classList.remove('show'); }
+function dismissRestore(){ _restoreDismissed=true; document.getElementById('restoreBar').classList.remove('show'); }
+function updateRestoreBar(){ var rb=document.getElementById('restoreBar'); if(!rb) return; var t=window._activeTool||'pages'; var onPages=(t!=='hf'&&t!=='crop'); rb.classList.toggle('show', onPages && !!_pendingRestore && !_restoreDismissed); }
 
 // 読み込み後に前回状態と突き合わせて復元を試みる
 function tryApplyRestore(){
@@ -1136,6 +1138,7 @@ function switchTool(which){
   document.getElementById('tabHFBtn').classList.toggle('active',isHF);
   var _cb=document.getElementById('tabCropBtn'); if(_cb) _cb.classList.toggle('active',isCrop);
   window._activeTool=which;
+  updateRestoreBar();
   if(isHF){ hfBuildSamples(); hfUpdatePreview(); }
   if(isCrop && typeof cropOnShow==='function') cropOnShow();
 }
@@ -1342,7 +1345,7 @@ function projectOpen(e){
       _pendingRestore={files:d.files, pages:d.pages, composition:d.composition||[]};
       var names=d.files.map(function(x){return x.name;}).join('・');
       document.getElementById('restoreMsg').innerHTML='プロジェクトを開きました：<b>'+esc(names)+'</b>（同じ素材PDFを読み込み直すと、並び順・回転・ヘッダー/フッターを復元します）';
-      document.getElementById('restoreBar').classList.add('show');
+      _restoreDismissed=false; updateRestoreBar();
       var uc=document.getElementById('chipUnused'); if(uc) uc.classList.remove('active');
       renderAll();
       toast('プロジェクトを読み込みました。素材PDFを読み込んでください',3200);
