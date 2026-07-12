@@ -184,6 +184,63 @@ body{font-family:'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif;backgroun
 /* HFパネル */
 .hf-panel{flex:1;display:none;min-height:0;overflow:hidden;}
 .hf-panel.show{display:flex;}
+/* ====== 切り出しタブ ====== */
+.crop-panel{flex:1;display:none;min-height:0;overflow:hidden;}
+.crop-panel.show{display:flex;}
+.cp-pages{width:var(--cp-panew,190px);flex-shrink:0;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;min-height:0;}
+.cp-pages-head{display:flex;align-items:center;justify-content:space-between;padding:7px 9px;font-size:11px;font-weight:700;color:var(--text-muted);border-bottom:1px solid var(--surface2);}
+.cp-coltoggle{display:inline-flex;gap:3px;}
+.cp-coltoggle button{border:1px solid var(--border);background:#fff;color:var(--text-muted);border-radius:5px;padding:1px 7px;font-size:11px;cursor:pointer;font-family:inherit;}
+.cp-coltoggle button.on{background:var(--crimson-light);color:var(--crimson-dark);border-color:var(--crimson);}
+.cp-thumbs{flex:1;overflow-y:auto;padding:8px;display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--cp-lthumb,160px),1fr));gap:8px;align-content:start;}
+.cp-thumbs.cols2{grid-template-columns:1fr 1fr;gap:6px;}
+.cp-thumb{position:relative;border:2px solid var(--border);border-radius:6px;cursor:pointer;overflow:hidden;background:#fff;}
+.cp-thumb:hover{border-color:var(--crimson-mid,#f4a0a5);}
+.cp-thumb.active{border-color:var(--crimson);}
+.cp-thumb canvas{display:block;width:100%;}
+.cp-thumb .n{position:absolute;left:0;bottom:0;background:rgba(30,41,59,.8);color:#fff;font-size:9px;padding:0 5px;border-top-right-radius:5px;}
+.cp-work{flex:1;min-width:0;display:flex;flex-direction:column;min-height:0;}
+.cp-work-bar{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--border);background:#fff;flex-shrink:0;}
+.cp-zoom{display:inline-flex;gap:4px;}
+.cp-zoom button{border:1.5px solid var(--border);background:#fff;color:var(--text-muted);border-radius:6px;padding:4px 9px;font-size:12px;cursor:pointer;font-family:inherit;}
+.cp-zoom button:hover{background:var(--surface2);}
+.cp-pageinfo{font-size:12px;color:var(--text-muted);margin-left:auto;}
+.cp-canvas-scroll{flex:1;overflow:auto;padding:16px;display:flex;justify-content:center;align-items:flex-start;background:var(--surface);}
+.cp-canvas-wrap{position:relative;display:inline-block;line-height:0;box-shadow:0 4px 18px rgba(0,0,0,.12);background:#fff;}
+#cpCanvas{display:block;cursor:crosshair;}
+.cp-sel{position:absolute;border:2px dashed var(--crimson);background:rgba(198,0,11,.10);pointer-events:none;display:none;}
+.cp-empty{color:var(--text-light);text-align:center;padding:60px 20px;max-width:430px;}
+.cp-empty .i{font-size:38px;margin-bottom:10px;}
+.cp-export{width:284px;flex-shrink:0;background:#fff;border-left:1px solid var(--border);overflow-y:auto;padding:14px;}
+.cp-sec{margin-bottom:15px;padding-bottom:13px;border-bottom:1px solid var(--surface2);}
+.cp-sec:last-child{border-bottom:none;}
+.cp-sec-t{font-size:11px;font-weight:800;color:var(--text-muted);margin-bottom:8px;}
+.cp-seg{display:flex;gap:6px;}
+.cp-seg button{flex:1;border:1.5px solid var(--border);background:#fff;color:var(--text-muted);border-radius:7px;padding:8px 4px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+.cp-seg button.on{background:var(--crimson-light);color:var(--crimson-dark);border-color:var(--crimson);}
+.cp-subopt{margin-top:9px;padding:9px;background:var(--surface);border-radius:7px;font-size:11.5px;}
+.cp-radio{display:flex;align-items:flex-start;gap:7px;padding:5px 0;cursor:pointer;}
+.cp-radio input{margin-top:3px;}
+.cp-radio .l{font-weight:700;}
+.cp-radio .d{font-size:10.5px;color:var(--text-muted);font-weight:400;}
+.cp-dpi{display:flex;gap:6px;margin-top:8px;}
+.cp-dpi button{flex:1;border:1.5px solid var(--border);background:#fff;color:var(--text-muted);border-radius:6px;padding:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;}
+.cp-dpi button.on{background:var(--blue-light,#dbeafe);color:var(--blue-dark,#1d4ed8);border-color:var(--blue,#3b82f6);}
+.cp-label{font-size:10.5px;font-weight:700;color:var(--text-muted);margin-bottom:4px;display:block;}
+.cp-input{border:1.5px solid var(--border);border-radius:7px;padding:8px 10px;font-size:14px;font-family:inherit;background:var(--surface);width:100%;box-sizing:border-box;}
+.cp-input:focus{outline:none;border-color:var(--crimson);background:#fff;box-shadow:0 0 0 3px rgba(198,0,11,.1);}
+.cp-nameprev{margin-top:6px;font-size:11.5px;color:var(--text-muted);}
+.cp-nameprev b{color:var(--crimson-dark);}
+.cp-folder{font-size:11px;padding:6px 8px;border-radius:6px;background:var(--surface);color:var(--text-muted);}
+.cp-folder.ok{background:var(--green-light,#d1fae5);color:var(--green-dark,#065f46);font-weight:700;}
+.cp-cut{width:100%;padding:13px;font-size:14px;font-weight:800;}
+.cp-log{font-size:11px;color:var(--text-muted);max-height:150px;overflow-y:auto;}
+.cp-log .r{display:flex;align-items:center;gap:6px;padding:3px 0;border-bottom:1px dashed var(--surface2);}
+.cp-log .r .f{font-size:9px;font-weight:800;border-radius:4px;padding:0 5px;}
+.cp-log .r .f.png{background:var(--blue-light,#dbeafe);color:var(--blue-dark,#1d4ed8);}
+.cp-log .r .f.pdf{background:#fee2e2;color:#991b1b;}
+.cp-hint{font-size:11px;color:var(--text-light);margin-top:4px;line-height:1.5;}
+.cp-help{width:15px;height:15px;background:#94a3b8;color:#fff;border-radius:50%;font-size:9px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;cursor:default;}
 .hf-controls{width:min(430px,44%);flex-shrink:0;border-right:2px solid var(--border);overflow-y:auto;padding:14px;background:#fff;}
 .hf-preview{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--surface2);}
 .hf-sec{border:1.5px solid var(--border);border-radius:10px;padding:12px;margin-bottom:12px;}
@@ -244,8 +301,9 @@ body{font-family:'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif;backgroun
 </div>
 
 <div class="tabbar">
-  <button class="tabbtn active" id="tabPagesBtn" onclick="switchTool('pages')">ページを選ぶ</button>
+  <button class="tabbtn active" id="tabPagesBtn" onclick="switchTool('pages')">ページを統合</button>
   <button class="tabbtn" id="tabHFBtn" onclick="switchTool('hf')">ヘッダー / フッター</button>
+  <button class="tabbtn" id="tabCropBtn" onclick="switchTool('crop')">切り出し</button>
 </div>
 <div class="workspace" id="workspace">
   <!-- 左：在庫 -->
@@ -312,7 +370,62 @@ body{font-family:'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif;backgroun
   </div>
 </div>
 
-<div class="hf-panel" id="hfPanel"><div class="hf-controls"><div class="hf-sec off" id="hfSec_header"><div class="hf-sec-head"><label class="hf-check"><input type="checkbox" id="hfOn_header" onchange="hfSet('header','on',this.checked)"> ヘッダー（上）を入れる</label></div><div class="hf-row"><span class="lbl">文字</span><input class="hf-text" id="hfText_header" oninput="hfSet('header','text',this.value)" placeholder="例：小5 単位と図形"></div><div class="hf-row" style="gap:6px"><button class="hf-token" onclick="hfInsertToken('header','PAGE')">＋ページ番号</button><button class="hf-token" onclick="hfInsertToken('header','TOTAL')">＋総ページ数</button><span class="hf-mini" style="font-size:10px;color:var(--text-light)">押すと 1 / 50 のように差し込まれます</span></div><div class="hf-row"><span class="lbl">位置</span><span class="hf-align" id="hfAlign_header"><button onclick="hfAlign('header','left',this)">左</button><button class="active" onclick="hfAlign('header','center',this)">中央</button><button onclick="hfAlign('header','right',this)">右</button></span><span class="lbl" style="width:auto;margin-left:6px">サイズ</span><input type="number" class="hf-num" id="hfSize_header" value="14" min="6" max="48" oninput="hfSet('header','size',+this.value||14)"><span class="lbl" style="width:auto;margin-left:8px">書体</span><select class="hf-num" style="width:auto;max-width:132px" id="hfFont_header" onchange="hfSet('header','font',this.value)"><option value="&quot;Yu Gothic&quot;,&quot;YuGothic&quot;,&quot;Hiragino Sans&quot;,&quot;Noto Sans JP&quot;,sans-serif">ゴシック体（游ゴシック）</option><option value="&quot;Yu Mincho&quot;,&quot;YuMincho&quot;,&quot;Hiragino Mincho ProN&quot;,&quot;MS Mincho&quot;,serif">明朝体（游明朝）</option><option value="&quot;Meiryo&quot;,sans-serif">メイリオ</option><option value="&quot;MS PGothic&quot;,&quot;MS Gothic&quot;,sans-serif">ＭＳ ゴシック</option><option value="&quot;MS PMincho&quot;,&quot;MS Mincho&quot;,serif">ＭＳ 明朝</option></select></div><div class="hf-row"><span class="lbl">左右</span><input type="range" class="hf-range" min="-160" max="160" value="0" oninput="hfSet('header','dx',+this.value)"><span class="lbl" style="width:auto">上下</span><input type="range" class="hf-range" min="-120" max="120" value="0" oninput="hfSet('header','dy',+this.value)"></div><div class="hf-row" style="gap:14px"><label class="hf-check"><input type="checkbox" onchange="hfSet('header','bold',this.checked)"> 太字</label><label class="hf-check"><input type="checkbox" onchange="hfSet('header','underline',this.checked)"> 名前欄の下線</label></div><div class="hf-row"><span class="lbl">色</span><span class="hf-swatches"><button class="hf-sw" style="background:#000000" title="#000000" onclick="hfSetColor('header','#000000')"></button><button class="hf-sw" style="background:#6b7280" title="#6b7280" onclick="hfSetColor('header','#6b7280')"></button><button class="hf-sw" style="background:#7f1d1d" title="#7f1d1d" onclick="hfSetColor('header','#7f1d1d')"></button><button class="hf-sw" style="background:#e11d1d" title="#e11d1d" onclick="hfSetColor('header','#e11d1d')"></button><button class="hf-sw" style="background:#f97316" title="#f97316" onclick="hfSetColor('header','#f97316')"></button><button class="hf-sw" style="background:#f5c400" title="#f5c400" onclick="hfSetColor('header','#f5c400')"></button><button class="hf-sw" style="background:#16a34a" title="#16a34a" onclick="hfSetColor('header','#16a34a')"></button><button class="hf-sw" style="background:#2563eb" title="#2563eb" onclick="hfSetColor('header','#2563eb')"></button><button class="hf-sw" style="background:#4f46e5" title="#4f46e5" onclick="hfSetColor('header','#4f46e5')"></button><button class="hf-sw" style="background:#7c3aed" title="#7c3aed" onclick="hfSetColor('header','#7c3aed')"></button></span><input type="color" value="#000000" title="自由に色を選ぶ" style="width:30px;height:24px;padding:0;border:1px solid var(--border);border-radius:5px;cursor:pointer;margin-left:4px" oninput="hfSet('header','color',this.value)"></div></div><div class="hf-sec off" id="hfSec_footer"><div class="hf-sec-head"><label class="hf-check"><input type="checkbox" id="hfOn_footer" onchange="hfSet('footer','on',this.checked)"> フッター（下）を入れる</label></div><div class="hf-row"><span class="lbl">文字</span><input class="hf-text" id="hfText_footer" oninput="hfSet('footer','text',this.value)" placeholder="例：ページ番号は右の＋ボタンから"></div><div class="hf-row" style="gap:6px"><button class="hf-token" onclick="hfInsertToken('footer','PAGE')">＋ページ番号</button><button class="hf-token" onclick="hfInsertToken('footer','TOTAL')">＋総ページ数</button><span class="hf-mini" style="font-size:10px;color:var(--text-light)">押すと 1 / 50 のように差し込まれます</span></div><div class="hf-row"><span class="lbl">位置</span><span class="hf-align" id="hfAlign_footer"><button onclick="hfAlign('footer','left',this)">左</button><button class="active" onclick="hfAlign('footer','center',this)">中央</button><button onclick="hfAlign('footer','right',this)">右</button></span><span class="lbl" style="width:auto;margin-left:6px">サイズ</span><input type="number" class="hf-num" id="hfSize_footer" value="12" min="6" max="48" oninput="hfSet('footer','size',+this.value||12)"><span class="lbl" style="width:auto;margin-left:8px">書体</span><select class="hf-num" style="width:auto;max-width:132px" id="hfFont_footer" onchange="hfSet('footer','font',this.value)"><option value="&quot;Yu Gothic&quot;,&quot;YuGothic&quot;,&quot;Hiragino Sans&quot;,&quot;Noto Sans JP&quot;,sans-serif">ゴシック体（游ゴシック）</option><option value="&quot;Yu Mincho&quot;,&quot;YuMincho&quot;,&quot;Hiragino Mincho ProN&quot;,&quot;MS Mincho&quot;,serif">明朝体（游明朝）</option><option value="&quot;Meiryo&quot;,sans-serif">メイリオ</option><option value="&quot;MS PGothic&quot;,&quot;MS Gothic&quot;,sans-serif">ＭＳ ゴシック</option><option value="&quot;MS PMincho&quot;,&quot;MS Mincho&quot;,serif">ＭＳ 明朝</option></select></div><div class="hf-row"><span class="lbl">左右</span><input type="range" class="hf-range" min="-160" max="160" value="0" oninput="hfSet('footer','dx',+this.value)"><span class="lbl" style="width:auto">上下</span><input type="range" class="hf-range" min="-120" max="120" value="0" oninput="hfSet('footer','dy',+this.value)"></div><div class="hf-row" style="gap:14px"><label class="hf-check"><input type="checkbox" onchange="hfSet('footer','bold',this.checked)"> 太字</label><label class="hf-check"><input type="checkbox" onchange="hfSet('footer','underline',this.checked)"> 名前欄の下線</label></div><div class="hf-row"><span class="lbl">色</span><span class="hf-swatches"><button class="hf-sw" style="background:#000000" title="#000000" onclick="hfSetColor('footer','#000000')"></button><button class="hf-sw" style="background:#6b7280" title="#6b7280" onclick="hfSetColor('footer','#6b7280')"></button><button class="hf-sw" style="background:#7f1d1d" title="#7f1d1d" onclick="hfSetColor('footer','#7f1d1d')"></button><button class="hf-sw" style="background:#e11d1d" title="#e11d1d" onclick="hfSetColor('footer','#e11d1d')"></button><button class="hf-sw" style="background:#f97316" title="#f97316" onclick="hfSetColor('footer','#f97316')"></button><button class="hf-sw" style="background:#f5c400" title="#f5c400" onclick="hfSetColor('footer','#f5c400')"></button><button class="hf-sw" style="background:#16a34a" title="#16a34a" onclick="hfSetColor('footer','#16a34a')"></button><button class="hf-sw" style="background:#2563eb" title="#2563eb" onclick="hfSetColor('footer','#2563eb')"></button><button class="hf-sw" style="background:#4f46e5" title="#4f46e5" onclick="hfSetColor('footer','#4f46e5')"></button><button class="hf-sw" style="background:#7c3aed" title="#7c3aed" onclick="hfSetColor('footer','#7c3aed')"></button></span><input type="color" value="#000000" title="自由に色を選ぶ" style="width:30px;height:24px;padding:0;border:1px solid var(--border);border-radius:5px;cursor:pointer;margin-left:4px" oninput="hfSet('footer','color',this.value)"></div></div><div class="hf-mini" style="color:var(--text-light);line-height:1.6">スライダーの「左右／上下」で位置を微調整できます。タイトルと被るときはここでずらしてください。ページによって内容が違うので、右のプレビューで先頭・中間・末尾など数ページを切り替えて被りを確認できます。</div></div><div class="hf-preview"><div class="hf-prev-bar"><span style="font-size:11px;font-weight:700;color:var(--text-muted)">プレビュー</span><span id="hfSampleChips" style="display:flex;gap:6px;flex-wrap:wrap"></span><div style="flex:1"></div><button class="btn-ghost" style="min-height:30px;padding:3px 11px" onclick="hfPrevStep(-1)">◀</button><button class="btn-ghost" style="min-height:30px;padding:3px 11px" onclick="hfPrevStep(1)">▶</button></div><div class="hf-prev-stage" id="hfPrevStage"><div class="hf-empty">「ページを選ぶ」タブで完成版にページを入れると、ここにプレビューが出ます</div></div><div class="hf-foot"><button class="btn-primary" id="hfExportBtn" onclick="exportWithHF()">ヘッダー/フッターを付けてダウンロード</button><span class="hf-mini" style="color:var(--text-muted)">完成版の全ページに反映して書き出します（無劣化）</span></div></div></div>
+<div class="hf-panel" id="hfPanel"><div class="hf-controls"><div class="hf-sec off" id="hfSec_header"><div class="hf-sec-head"><label class="hf-check"><input type="checkbox" id="hfOn_header" onchange="hfSet('header','on',this.checked)"> ヘッダー（上）を入れる</label></div><div class="hf-row"><span class="lbl">文字</span><input class="hf-text" id="hfText_header" oninput="hfSet('header','text',this.value)" placeholder="例：小5 単位と図形"></div><div class="hf-row" style="gap:6px"><button class="hf-token" onclick="hfInsertToken('header','PAGE')">＋ページ番号</button><button class="hf-token" onclick="hfInsertToken('header','TOTAL')">＋総ページ数</button><span class="hf-mini" style="font-size:10px;color:var(--text-light)">押すと 1 / 50 のように差し込まれます</span></div><div class="hf-row"><span class="lbl">位置</span><span class="hf-align" id="hfAlign_header"><button onclick="hfAlign('header','left',this)">左</button><button class="active" onclick="hfAlign('header','center',this)">中央</button><button onclick="hfAlign('header','right',this)">右</button></span><span class="lbl" style="width:auto;margin-left:6px">サイズ</span><input type="number" class="hf-num" id="hfSize_header" value="14" min="6" max="48" oninput="hfSet('header','size',+this.value||14)"><span class="lbl" style="width:auto;margin-left:8px">書体</span><select class="hf-num" style="width:auto;max-width:132px" id="hfFont_header" onchange="hfSet('header','font',this.value)"><option value="&quot;Yu Gothic&quot;,&quot;YuGothic&quot;,&quot;Hiragino Sans&quot;,&quot;Noto Sans JP&quot;,sans-serif">ゴシック体（游ゴシック）</option><option value="&quot;Yu Mincho&quot;,&quot;YuMincho&quot;,&quot;Hiragino Mincho ProN&quot;,&quot;MS Mincho&quot;,serif">明朝体（游明朝）</option><option value="&quot;Meiryo&quot;,sans-serif">メイリオ</option><option value="&quot;MS PGothic&quot;,&quot;MS Gothic&quot;,sans-serif">ＭＳ ゴシック</option><option value="&quot;MS PMincho&quot;,&quot;MS Mincho&quot;,serif">ＭＳ 明朝</option></select></div><div class="hf-row"><span class="lbl">左右</span><input type="range" class="hf-range" min="-160" max="160" value="0" oninput="hfSet('header','dx',+this.value)"><span class="lbl" style="width:auto">上下</span><input type="range" class="hf-range" min="-120" max="120" value="0" oninput="hfSet('header','dy',+this.value)"></div><div class="hf-row" style="gap:14px"><label class="hf-check"><input type="checkbox" onchange="hfSet('header','bold',this.checked)"> 太字</label><label class="hf-check"><input type="checkbox" onchange="hfSet('header','underline',this.checked)"> 名前欄の下線</label></div><div class="hf-row"><span class="lbl">色</span><span class="hf-swatches"><button class="hf-sw" style="background:#000000" title="#000000" onclick="hfSetColor('header','#000000')"></button><button class="hf-sw" style="background:#6b7280" title="#6b7280" onclick="hfSetColor('header','#6b7280')"></button><button class="hf-sw" style="background:#7f1d1d" title="#7f1d1d" onclick="hfSetColor('header','#7f1d1d')"></button><button class="hf-sw" style="background:#e11d1d" title="#e11d1d" onclick="hfSetColor('header','#e11d1d')"></button><button class="hf-sw" style="background:#f97316" title="#f97316" onclick="hfSetColor('header','#f97316')"></button><button class="hf-sw" style="background:#f5c400" title="#f5c400" onclick="hfSetColor('header','#f5c400')"></button><button class="hf-sw" style="background:#16a34a" title="#16a34a" onclick="hfSetColor('header','#16a34a')"></button><button class="hf-sw" style="background:#2563eb" title="#2563eb" onclick="hfSetColor('header','#2563eb')"></button><button class="hf-sw" style="background:#4f46e5" title="#4f46e5" onclick="hfSetColor('header','#4f46e5')"></button><button class="hf-sw" style="background:#7c3aed" title="#7c3aed" onclick="hfSetColor('header','#7c3aed')"></button></span><input type="color" value="#000000" title="自由に色を選ぶ" style="width:30px;height:24px;padding:0;border:1px solid var(--border);border-radius:5px;cursor:pointer;margin-left:4px" oninput="hfSet('header','color',this.value)"></div></div><div class="hf-sec off" id="hfSec_footer"><div class="hf-sec-head"><label class="hf-check"><input type="checkbox" id="hfOn_footer" onchange="hfSet('footer','on',this.checked)"> フッター（下）を入れる</label></div><div class="hf-row"><span class="lbl">文字</span><input class="hf-text" id="hfText_footer" oninput="hfSet('footer','text',this.value)" placeholder="例：ページ番号は右の＋ボタンから"></div><div class="hf-row" style="gap:6px"><button class="hf-token" onclick="hfInsertToken('footer','PAGE')">＋ページ番号</button><button class="hf-token" onclick="hfInsertToken('footer','TOTAL')">＋総ページ数</button><span class="hf-mini" style="font-size:10px;color:var(--text-light)">押すと 1 / 50 のように差し込まれます</span></div><div class="hf-row"><span class="lbl">位置</span><span class="hf-align" id="hfAlign_footer"><button onclick="hfAlign('footer','left',this)">左</button><button class="active" onclick="hfAlign('footer','center',this)">中央</button><button onclick="hfAlign('footer','right',this)">右</button></span><span class="lbl" style="width:auto;margin-left:6px">サイズ</span><input type="number" class="hf-num" id="hfSize_footer" value="12" min="6" max="48" oninput="hfSet('footer','size',+this.value||12)"><span class="lbl" style="width:auto;margin-left:8px">書体</span><select class="hf-num" style="width:auto;max-width:132px" id="hfFont_footer" onchange="hfSet('footer','font',this.value)"><option value="&quot;Yu Gothic&quot;,&quot;YuGothic&quot;,&quot;Hiragino Sans&quot;,&quot;Noto Sans JP&quot;,sans-serif">ゴシック体（游ゴシック）</option><option value="&quot;Yu Mincho&quot;,&quot;YuMincho&quot;,&quot;Hiragino Mincho ProN&quot;,&quot;MS Mincho&quot;,serif">明朝体（游明朝）</option><option value="&quot;Meiryo&quot;,sans-serif">メイリオ</option><option value="&quot;MS PGothic&quot;,&quot;MS Gothic&quot;,sans-serif">ＭＳ ゴシック</option><option value="&quot;MS PMincho&quot;,&quot;MS Mincho&quot;,serif">ＭＳ 明朝</option></select></div><div class="hf-row"><span class="lbl">左右</span><input type="range" class="hf-range" min="-160" max="160" value="0" oninput="hfSet('footer','dx',+this.value)"><span class="lbl" style="width:auto">上下</span><input type="range" class="hf-range" min="-120" max="120" value="0" oninput="hfSet('footer','dy',+this.value)"></div><div class="hf-row" style="gap:14px"><label class="hf-check"><input type="checkbox" onchange="hfSet('footer','bold',this.checked)"> 太字</label><label class="hf-check"><input type="checkbox" onchange="hfSet('footer','underline',this.checked)"> 名前欄の下線</label></div><div class="hf-row"><span class="lbl">色</span><span class="hf-swatches"><button class="hf-sw" style="background:#000000" title="#000000" onclick="hfSetColor('footer','#000000')"></button><button class="hf-sw" style="background:#6b7280" title="#6b7280" onclick="hfSetColor('footer','#6b7280')"></button><button class="hf-sw" style="background:#7f1d1d" title="#7f1d1d" onclick="hfSetColor('footer','#7f1d1d')"></button><button class="hf-sw" style="background:#e11d1d" title="#e11d1d" onclick="hfSetColor('footer','#e11d1d')"></button><button class="hf-sw" style="background:#f97316" title="#f97316" onclick="hfSetColor('footer','#f97316')"></button><button class="hf-sw" style="background:#f5c400" title="#f5c400" onclick="hfSetColor('footer','#f5c400')"></button><button class="hf-sw" style="background:#16a34a" title="#16a34a" onclick="hfSetColor('footer','#16a34a')"></button><button class="hf-sw" style="background:#2563eb" title="#2563eb" onclick="hfSetColor('footer','#2563eb')"></button><button class="hf-sw" style="background:#4f46e5" title="#4f46e5" onclick="hfSetColor('footer','#4f46e5')"></button><button class="hf-sw" style="background:#7c3aed" title="#7c3aed" onclick="hfSetColor('footer','#7c3aed')"></button></span><input type="color" value="#000000" title="自由に色を選ぶ" style="width:30px;height:24px;padding:0;border:1px solid var(--border);border-radius:5px;cursor:pointer;margin-left:4px" oninput="hfSet('footer','color',this.value)"></div></div><div class="hf-mini" style="color:var(--text-light);line-height:1.6">スライダーの「左右／上下」で位置を微調整できます。タイトルと被るときはここでずらしてください。ページによって内容が違うので、右のプレビューで先頭・中間・末尾など数ページを切り替えて被りを確認できます。</div></div><div class="hf-preview"><div class="hf-prev-bar"><span style="font-size:11px;font-weight:700;color:var(--text-muted)">プレビュー</span><span id="hfSampleChips" style="display:flex;gap:6px;flex-wrap:wrap"></span><div style="flex:1"></div><button class="btn-ghost" style="min-height:30px;padding:3px 11px" onclick="hfPrevStep(-1)">◀</button><button class="btn-ghost" style="min-height:30px;padding:3px 11px" onclick="hfPrevStep(1)">▶</button></div><div class="hf-prev-stage" id="hfPrevStage"><div class="hf-empty">「ページを統合」タブで完成版にページを入れると、ここにプレビューが出ます</div></div><div class="hf-foot"><button class="btn-primary" id="hfExportBtn" onclick="exportWithHF()">ヘッダー/フッターを付けてダウンロード</button><span class="hf-mini" style="color:var(--text-muted)">完成版の全ページに反映して書き出します（無劣化）</span></div></div></div>
+<div class="crop-panel" id="cropPanel">
+  <div class="cp-pages" id="cpPages">
+    <div class="cp-pages-head"><span>ページ</span>
+      <span class="zoom-ctrl"><button class="zbtn" onclick="cropZoomThumb(-1)" title="小さく（並ぶ枚数を増やす）">−</button><button class="zbtn reset" onclick="cropZoomReset()" title="標準">標準</button><button class="zbtn" onclick="cropZoomThumb(1)" title="大きく（並ぶ枚数を減らす）">＋</button></span>
+    </div>
+    <div class="cp-thumbs" id="cpThumbs"></div>
+  </div>
+  <div class="splitter" id="cpSplitter" title="ドラッグで幅を変える／ダブルクリックで標準に戻す"></div>
+  <div class="cp-work" id="cpWork">
+    <div class="cp-work-bar">
+      <button class="btn-primary" onclick="document.getElementById('cpFile').click()">📄 PDFを開く</button>
+      <input type="file" id="cpFile" accept="application/pdf" style="display:none" onchange="cropOnFilePick(event)">
+      <span class="cp-zoom"><button onclick="cropZoom(-1)" title="縮小">🔍−</button><button onclick="cropZoom(0)" title="標準に戻す">標準</button><button onclick="cropZoom(1)" title="拡大">🔍＋</button></span>
+      <span class="cp-pageinfo" id="cpPageInfo"></span>
+    </div>
+    <div class="cp-canvas-scroll" id="cpCanvasScroll">
+      <div class="cp-empty" id="cpEmpty"><div class="i">✂️</div><div style="font-weight:700">「PDFを開く」か、PDFをここに投げ入れてください</div><div class="cp-hint">左からページを選び、切り取りたい範囲をマウスのドラッグで囲みます</div></div>
+      <div class="cp-canvas-wrap" id="cpCanvasWrap" style="display:none;"><canvas id="cpCanvas"></canvas><div class="cp-sel" id="cpSel"></div></div>
+    </div>
+  </div>
+  <div class="cp-export">
+    <div class="cp-sec">
+      <div class="cp-sec-t">① 出力形式</div>
+      <div class="cp-seg"><button id="cpFmtPng" class="on" onclick="cropSetFmt('png')">PNG（画像）</button><button id="cpFmtPdf" onclick="cropSetFmt('pdf')">PDF</button></div>
+      <div class="cp-subopt" id="cpPngOpt">解像度（PNG）
+        <div class="cp-dpi"><button id="cpDpi300" class="on" onclick="cropSetDpi(300)">300dpi</button><button id="cpDpi400" onclick="cropSetDpi(400)">400dpi</button></div>
+        <div class="cp-hint">スクリーンショットより高精細です</div>
+      </div>
+      <div class="cp-subopt" id="cpPdfOpt" style="display:none;">
+        <label class="cp-radio"><input type="radio" name="cpPdfMode" value="vector" checked><span><span class="l">ベクターのまま（劣化なし）</span><br><span class="d">文字・線をそのまま切り出す。拡大しても荒れません。文章向き。</span></span></label>
+        <label class="cp-radio"><input type="radio" name="cpPdfMode" value="raster"><span><span class="l">高解像度画像で切り出す（保険）</span><br><span class="d">300dpiの画像としてPDF化。ベクターでうまく出ない時用。</span></span></label>
+      </div>
+    </div>
+    <div class="cp-sec">
+      <div class="cp-sec-t">② ファイル名 <span class="cp-help" title="末尾の数字を1ずつ増やして連番にします。例：rika01-s → rika02-s">?</span></div>
+      <label class="cp-label">ベース名（数字部分が連番になります）</label>
+      <input type="text" class="cp-input" id="cpBaseName" value="rika01-s" oninput="cropUpdateNamePrev()">
+      <div class="cp-nameprev" id="cpNamePrev"></div>
+    </div>
+    <div class="cp-sec">
+      <div class="cp-sec-t">③ 保存先</div>
+      <button class="btn-ghost" style="width:100%" onclick="cropPickFolder()">📁 保存先フォルダを選ぶ</button>
+      <div class="cp-folder" id="cpFolderState" style="margin-top:6px;">未選択（切り出すとダウンロードフォルダに保存されます）</div>
+      <div class="cp-hint">フォルダを選ぶと、そこに連番で直接どんどん保存します（Chrome）。</div>
+    </div>
+    <div class="cp-sec">
+      <button class="btn-primary cp-cut" id="cpCutBtn" onclick="cropDoCut()" disabled>✂️ この範囲を切り出す</button>
+      <div class="cp-hint" id="cpCutHint">まずページを選んで範囲を囲んでください</div>
+    </div>
+    <div class="cp-sec">
+      <div class="cp-sec-t">切り出した一覧 <span id="cpLogCount" style="color:var(--crimson-dark)"></span></div>
+      <div class="cp-log" id="cpLog"><div class="cp-hint">まだありません</div></div>
+    </div>
+  </div>
+</div>
 <div class="drop-hint" id="dropHint"><span style="display:inline-flex;align-items:center;gap:8px;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>PDFをここにドロップ</span></div>
 <div class="preview-overlay" id="previewOverlay" onclick="if(event.target===this)closePreview()">
   <button class="preview-nav prev" onclick="previewStep(-1)" title="前のページ（←）"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
@@ -932,8 +1045,8 @@ window.addEventListener('dragleave',function(e){ _dragDepth--; if(_dragDepth<=0)
 window.addEventListener('drop',function(e){
   e.preventDefault(); _dragDepth=0; document.getElementById('dropHint').classList.remove('show');
   if(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length){
-    var had=_files.length;
-    loadFilesThenRestore(e.dataTransfer.files, had===0);
+    if(window._activeTool==='crop'){ cropAcceptFiles(e.dataTransfer.files); }
+    else { var had=_files.length; loadFilesThenRestore(e.dataTransfer.files, had===0); }
   }
 });
 function loadFilesThenRestore(fileList, tryRestore){
@@ -1015,12 +1128,16 @@ var _hf={
 var _hfSamples=[], _hfSampleIdx=0, _hfBase={}, _hfPrevToken=0;
 
 function switchTool(which){
-  var pages=(which!=='hf');
-  document.getElementById('workspace').style.display=pages?'flex':'none';
-  document.getElementById('hfPanel').classList.toggle('show',!pages);
-  document.getElementById('tabPagesBtn').classList.toggle('active',pages);
-  document.getElementById('tabHFBtn').classList.toggle('active',!pages);
-  if(!pages){ hfBuildSamples(); hfUpdatePreview(); }
+  var isCrop=(which==='crop'), isHF=(which==='hf'), isPages=(!isCrop&&!isHF);
+  document.getElementById('workspace').style.display=isPages?'flex':'none';
+  document.getElementById('hfPanel').classList.toggle('show',isHF);
+  var _cp=document.getElementById('cropPanel'); if(_cp) _cp.classList.toggle('show',isCrop);
+  document.getElementById('tabPagesBtn').classList.toggle('active',isPages);
+  document.getElementById('tabHFBtn').classList.toggle('active',isHF);
+  var _cb=document.getElementById('tabCropBtn'); if(_cb) _cb.classList.toggle('active',isCrop);
+  window._activeTool=which;
+  if(isHF){ hfBuildSamples(); hfUpdatePreview(); }
+  if(isCrop && typeof cropOnShow==='function') cropOnShow();
 }
 function saveHF(){ try{ localStorage.setItem(HF_KEY,JSON.stringify(_hf)); }catch(e){} }
 function loadHF(){ try{ var r=localStorage.getItem(HF_KEY); if(r){ var d=JSON.parse(r); if(d&&d.header&&d.footer) _hf=d; } }catch(e){} hfSyncControls(); }
@@ -1134,7 +1251,7 @@ function hfEnsureBase(pid,cb){
 function hfUpdatePreview(){
   var stage=document.getElementById('hfPrevStage'); if(!stage) return;
   var btn=document.getElementById('hfExportBtn');
-  if(_composition.length===0){ stage.innerHTML='<div class="hf-empty">「ページを選ぶ」タブで完成版にページを入れると、ここにプレビューが出ます</div>'; if(btn) btn.disabled=true; return; }
+  if(_composition.length===0){ stage.innerHTML='<div class="hf-empty">「ページを統合」タブで完成版にページを入れると、ここにプレビューが出ます</div>'; if(btn) btn.disabled=true; return; }
   if(btn) btn.disabled=false;
   if(!_hfSamples.length) hfBuildSamples();
   if(_hfSampleIdx>=_hfSamples.length) _hfSampleIdx=0;
@@ -1242,6 +1359,152 @@ window.addEventListener('load',function(){
   updateUndoButtons();
   loadHF();
 });
+
+
+/* ====== 切り出しタブ（cropタブ・統合とは完全に独立。pdfbuild_* は触らない） ====== */
+var _cropDoc=null,_cropBytes=null,_cropPageCount=0,_cropCur=0;
+var _cropFitBase=1,_cropZoomStep=0,_cropPageWpt=0,_cropPageHpt=0;
+var _cropFmt='png',_cropDpi=300;
+var CROP_THUMB_MIN=72,CROP_THUMB_MAX=780,CROP_THUMB_FACTOR=1.2,CROP_THUMB_DEF=160;
+var CROP_PANE_MIN=120,CROP_PANE_MAX=520,CROP_PANE_DEF=190;
+var _cropUI={ lthumb:CROP_THUMB_DEF, panew:CROP_PANE_DEF };
+var _cropSel=null,_cropDir=null,_cropCutCount=0;
+var CROP_KEY='pdfcrop_settings';
+window._activeTool=window._activeTool||'pages';
+
+function cropLoadSettings(){
+  try{ var r=localStorage.getItem(CROP_KEY); if(r){ var d=JSON.parse(r)||{};
+    if(d.fmt) _cropFmt=d.fmt; if(d.dpi) _cropDpi=d.dpi;
+    if(d.baseName){ var el=document.getElementById('cpBaseName'); if(el) el.value=d.baseName; }
+    if(d.lthumb) _cropUI.lthumb=d.lthumb; if(d.panew) _cropUI.panew=d.panew; } }catch(e){}
+  cropApplyUI();
+}
+function cropSaveSettings(){ try{ var base=(document.getElementById('cpBaseName')||{}).value||''; localStorage.setItem(CROP_KEY,JSON.stringify({fmt:_cropFmt,dpi:_cropDpi,baseName:base,lthumb:_cropUI.lthumb,panew:_cropUI.panew})); }catch(e){} }
+
+function cropApplyUI(){ document.documentElement.style.setProperty('--cp-lthumb',_cropUI.lthumb+'px'); document.documentElement.style.setProperty('--cp-panew',_cropUI.panew+'px'); }
+function cropZoomThumb(dir){ var v=dir>0?_cropUI.lthumb*CROP_THUMB_FACTOR:_cropUI.lthumb/CROP_THUMB_FACTOR; v=Math.round(Math.max(CROP_THUMB_MIN,Math.min(CROP_THUMB_MAX,v))); if(v===Math.round(_cropUI.lthumb)){ toast(dir>0?'これ以上大きくできません':'これ以上小さくできません',1400); return; } _cropUI.lthumb=v; cropApplyUI(); cropSaveSettings(); }
+function cropZoomReset(){ _cropUI.lthumb=CROP_THUMB_DEF; cropApplyUI(); cropSaveSettings(); toast('標準の大きさに戻しました',1400); }
+function cropInitSplitter(){ var sp=document.getElementById('cpSplitter'), panel=document.getElementById('cropPanel'); if(!sp||!panel) return; var dragging=false; function move(e){ if(!dragging) return; var r=panel.getBoundingClientRect(); var x=(e.touches&&e.touches[0])?e.touches[0].clientX:e.clientX; var w=Math.max(CROP_PANE_MIN,Math.min(CROP_PANE_MAX,x-r.left)); _cropUI.panew=Math.round(w); document.documentElement.style.setProperty('--cp-panew',_cropUI.panew+'px'); if(e.cancelable) e.preventDefault(); } function upp(){ if(!dragging) return; dragging=false; sp.classList.remove('dragging'); document.body.style.userSelect=''; cropSaveSettings(); } sp.addEventListener('mousedown',function(e){ dragging=true; sp.classList.add('dragging'); document.body.style.userSelect='none'; e.preventDefault(); }); document.addEventListener('mousemove',move); document.addEventListener('mouseup',upp); sp.addEventListener('touchstart',function(e){ dragging=true; sp.classList.add('dragging'); },{passive:false}); document.addEventListener('touchmove',move,{passive:false}); document.addEventListener('touchend',upp); sp.addEventListener('dblclick',function(){ _cropUI.panew=CROP_PANE_DEF; cropApplyUI(); cropSaveSettings(); }); }
+
+function cropOnShow(){ cropSetFmt(_cropFmt,true); cropSetDpi(_cropDpi,true); cropApplyUI(); cropUpdateNamePrev(); }
+
+function cropOnFilePick(e){ if(e.target.files&&e.target.files.length) cropAcceptFiles(e.target.files); e.target.value=''; }
+function cropAcceptFiles(fileList){
+  var arr=Array.prototype.slice.call(fileList||[]);
+  var pdf=arr.filter(function(f){ return /\.pdf$/i.test(f.name)||f.type==='application/pdf'; })[0];
+  if(!pdf){ toast('PDFファイルを投げ入れてください'); return; }
+  var reader=new FileReader();
+  reader.onload=function(){ _cropBytes=new Uint8Array(reader.result); cropLoadPdf(_cropBytes.slice(0)); };
+  reader.onerror=function(){ toast('読み込みに失敗しました',3000); };
+  reader.readAsArrayBuffer(pdf);
+}
+function cropLoadPdf(bytes){
+  showLoading('PDFを読み込み中…');
+  pdfjsLib.getDocument({data:bytes}).promise.then(function(doc){
+    _cropDoc=doc; _cropPageCount=doc.numPages;
+    var em=document.getElementById('cpEmpty'); if(em) em.style.display='none';
+    cropRenderThumbs(); cropSelectPage(1); hideLoading();
+    toast('全'+_cropPageCount+'ページを読み込みました');
+  }).catch(function(err){ hideLoading(); toast('読み込みに失敗しました',3000); console.warn('[crop]',err); });
+}
+function cropRenderThumbs(){
+  var box=document.getElementById('cpThumbs'); if(!box) return Promise.resolve();
+  box.innerHTML='';
+  var chain=Promise.resolve();
+  for(var i=1;i<=_cropPageCount;i++){ (function(n){
+    chain=chain.then(function(){ return _cropDoc.getPage(n).then(function(page){
+      var vp=page.getViewport({scale:0.5});
+      var cv=document.createElement('canvas'); cv.width=vp.width; cv.height=vp.height;
+      var d=document.createElement('div'); d.className='cp-thumb'; d.id='cpThumb-'+n;
+      if(n===_cropCur) d.classList.add('active');
+      d.onclick=function(){ cropSelectPage(n); };
+      d.appendChild(cv);
+      var nm=document.createElement('span'); nm.className='n'; nm.textContent=n; d.appendChild(nm);
+      box.appendChild(d);
+      return page.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;
+    }); });
+  })(i); }
+  return chain;
+}
+function cropSelectPage(n){
+  if(!_cropDoc) return; _cropCur=n;
+  document.querySelectorAll('.cp-thumb').forEach(function(t){ t.classList.remove('active'); });
+  var th=document.getElementById('cpThumb-'+n); if(th){ th.classList.add('active'); th.scrollIntoView({block:'nearest'}); }
+  showLoading('ページを表示中…');
+  _cropDoc.getPage(n).then(function(page){
+    var un=page.getViewport({scale:1}); _cropPageWpt=un.width; _cropPageHpt=un.height;
+    var avail=(document.getElementById('cpCanvasScroll').clientWidth||760)-40;
+    _cropFitBase=Math.min(avail/_cropPageWpt,2.0); _cropZoomStep=0; cropRenderMain();
+  });
+}
+function cropScale(){ return Math.max(0.2,_cropFitBase*Math.pow(1.25,_cropZoomStep)); }
+function cropRenderMain(){
+  if(!_cropDoc) return; showLoading('表示中…');
+  _cropDoc.getPage(_cropCur).then(function(page){
+    var vp=page.getViewport({scale:cropScale()});
+    var canvas=document.getElementById('cpCanvas'); canvas.width=vp.width; canvas.height=vp.height;
+    document.getElementById('cpCanvasWrap').style.display='inline-block';
+    cropClearSel();
+    var pi=document.getElementById('cpPageInfo'); if(pi) pi.textContent=_cropCur+' / '+_cropPageCount+' ページ';
+    page.render({canvasContext:canvas.getContext('2d'),viewport:vp}).promise.then(function(){ hideLoading(); });
+  });
+}
+function cropZoom(dir){ if(!_cropDoc) return; if(dir===0) _cropZoomStep=0; else _cropZoomStep=Math.max(-3,Math.min(6,_cropZoomStep+dir)); cropRenderMain(); }
+
+(function(){
+  var canvas=document.getElementById('cpCanvas'), box=document.getElementById('cpSel');
+  if(!canvas||!box) return;
+  var drawing=false,sx=0,sy=0;
+  function toPx(ev){ var r=canvas.getBoundingClientRect(); return {x:(ev.clientX-r.left)*(canvas.width/r.width), y:(ev.clientY-r.top)*(canvas.height/r.height), dx:ev.clientX-r.left, dy:ev.clientY-r.top}; }
+  canvas.addEventListener('mousedown',function(ev){ if(!_cropDoc) return; drawing=true; var p=toPx(ev); sx=p.x; sy=p.y; box.dataset.sx=p.dx; box.dataset.sy=p.dy; box.style.display='block'; box.style.left=p.dx+'px'; box.style.top=p.dy+'px'; box.style.width='0px'; box.style.height='0px'; });
+  window.addEventListener('mousemove',function(ev){ if(!drawing) return; var p=toPx(ev); var ax=+box.dataset.sx, ay=+box.dataset.sy; box.style.left=Math.min(ax,p.dx)+'px'; box.style.top=Math.min(ay,p.dy)+'px'; box.style.width=Math.abs(p.dx-ax)+'px'; box.style.height=Math.abs(p.dy-ay)+'px'; });
+  window.addEventListener('mouseup',function(ev){ if(!drawing) return; drawing=false; var p=toPx(ev); var x0=Math.min(sx,p.x), y0=Math.min(sy,p.y), w=Math.abs(p.x-sx), h=Math.abs(p.y-sy); if(w<6||h<6){ cropClearSel(); return; } _cropSel={xpx:x0,ypx:y0,wpx:w,hpx:h}; var btn=document.getElementById('cpCutBtn'); if(btn) btn.disabled=false; var hh=document.getElementById('cpCutHint'); if(hh) hh.textContent='「'+cropPeek()+'」で切り出します'; });
+})();
+function cropClearSel(){ _cropSel=null; var b=document.getElementById('cpSel'); if(b) b.style.display='none'; var btn=document.getElementById('cpCutBtn'); if(btn) btn.disabled=true; var h=document.getElementById('cpCutHint'); if(h) h.textContent='まずページを選んで範囲を囲んでください'; }
+
+function cropSetFmt(f,silent){ _cropFmt=f; document.getElementById('cpFmtPng').classList.toggle('on',f==='png'); document.getElementById('cpFmtPdf').classList.toggle('on',f==='pdf'); document.getElementById('cpPngOpt').style.display=f==='png'?'block':'none'; document.getElementById('cpPdfOpt').style.display=f==='pdf'?'block':'none'; cropUpdateNamePrev(); if(!silent) cropSaveSettings(); }
+function cropSetDpi(d,silent){ _cropDpi=d; document.getElementById('cpDpi300').classList.toggle('on',d===300); document.getElementById('cpDpi400').classList.toggle('on',d===400); if(!silent) cropSaveSettings(); }
+
+function cropNextName(name){ var m=name.match(/^(.*?)(\d+)(\D*)$/); if(!m) return name; var num=(parseInt(m[2],10)+1).toString(); while(num.length<m[2].length) num='0'+num; return m[1]+num+m[3]; }
+function cropPeek(){ return (document.getElementById('cpBaseName').value.trim())+'.'+_cropFmt; }
+function cropUpdateNamePrev(){ var base=((document.getElementById('cpBaseName')||{}).value||'').trim(); var el=document.getElementById('cpNamePrev'); if(!el) return; el.innerHTML='今回：<b>'+esc(base)+'.'+_cropFmt+'</b>　→　次回：'+esc(cropNextName(base))+'.'+_cropFmt; if(_cropSel){ var h=document.getElementById('cpCutHint'); if(h) h.textContent='「'+cropPeek()+'」で切り出します'; } }
+
+function cropPickFolder(){ if(!window.showDirectoryPicker){ toast('このブラウザはフォルダ直接保存に未対応です（Chrome推奨）',3000); return; } window.showDirectoryPicker().then(function(h){ _cropDir=h; var st=document.getElementById('cpFolderState'); st.className='cp-folder ok'; st.textContent='📁 '+h.name+' に保存します'; }).catch(function(){}); }
+function cropSaveBlob(blob,filename){ if(_cropDir){ return _cropDir.getFileHandle(filename,{create:true}).then(function(fh){ return fh.createWritable().then(function(w){ return w.write(blob).then(function(){ return w.close(); }); }); }); } return new Promise(function(res){ var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename; document.body.appendChild(a); a.click(); document.body.removeChild(a); setTimeout(function(){ URL.revokeObjectURL(a.href); res(); },300); }); }
+
+function cropDoCut(){
+  if(!_cropSel){ toast('範囲を囲んでください'); return; }
+  var base=(document.getElementById('cpBaseName').value||'').trim();
+  if(!base){ toast('ファイル名を入れてください'); return; }
+  var btn=document.getElementById('cpCutBtn'); if(btn) btn.disabled=true;
+  showLoading('切り出し中…');
+  var s=cropScale();
+  var x0pt=_cropSel.xpx/s, yTop=_cropSel.ypx/s, wpt=_cropSel.wpx/s, hpt=_cropSel.hpx/s;
+  var y0pt=_cropPageHpt-(yTop+hpt);
+  var p;
+  if(_cropFmt==='png') p=cropExportPng(x0pt,yTop,wpt,hpt,_cropDpi,base+'.png');
+  else { var mode=(document.querySelector('input[name="cpPdfMode"]:checked')||{}).value||'vector'; p=(mode==='vector')?cropExportPdfVector(x0pt,y0pt,wpt,hpt,base+'.pdf'):cropExportPdfRaster(x0pt,yTop,wpt,hpt,base+'.pdf'); }
+  p.then(function(){ cropAddLog(base+'.'+_cropFmt,_cropFmt); document.getElementById('cpBaseName').value=cropNextName(base); cropUpdateNamePrev(); cropSaveSettings(); hideLoading(); toast('✅ '+base+'.'+_cropFmt+' を保存しました'); }).catch(function(err){ hideLoading(); console.warn('[crop]',err); toast('切り出しに失敗しました',3000); }).finally(function(){ if(_cropSel && btn) btn.disabled=false; });
+}
+function cropRenderRegion(scale,x0pt,yTop,wpt,hpt){
+  return _cropDoc.getPage(_cropCur).then(function(page){
+    var vp=page.getViewport({scale:scale});
+    var full=document.createElement('canvas'); full.width=vp.width; full.height=vp.height;
+    return page.render({canvasContext:full.getContext('2d'),viewport:vp}).promise.then(function(){
+      var cx=Math.round(x0pt*scale),cy=Math.round(yTop*scale),cw=Math.max(1,Math.round(wpt*scale)),ch=Math.max(1,Math.round(hpt*scale));
+      var crop=document.createElement('canvas'); crop.width=cw; crop.height=ch;
+      crop.getContext('2d').drawImage(full,cx,cy,cw,ch,0,0,cw,ch); return crop;
+    });
+  });
+}
+function cropExportPng(x0pt,yTop,wpt,hpt,dpi,filename){ return cropRenderRegion(dpi/72,x0pt,yTop,wpt,hpt).then(function(crop){ return new Promise(function(res){ crop.toBlob(function(b){ cropSaveBlob(b,filename).then(res); },'image/png'); }); }); }
+function cropExportPdfVector(x0pt,y0pt,wpt,hpt,filename){ return PDFLib.PDFDocument.load(_cropBytes).then(function(src){ return PDFLib.PDFDocument.create().then(function(out){ return out.copyPages(src,[_cropCur-1]).then(function(pgs){ var pg=pgs[0]; out.addPage(pg); var mb=pg.getMediaBox(); pg.setMediaBox(mb.x+x0pt,mb.y+y0pt,wpt,hpt); pg.setCropBox(mb.x+x0pt,mb.y+y0pt,wpt,hpt); return out.save().then(function(bytes){ return cropSaveBlob(new Blob([bytes],{type:'application/pdf'}),filename); }); }); }); }); }
+function cropExportPdfRaster(x0pt,yTop,wpt,hpt,filename){ return cropRenderRegion(300/72,x0pt,yTop,wpt,hpt).then(function(crop){ return new Promise(function(res,rej){ crop.toBlob(function(b){ b.arrayBuffer().then(function(ab){ return PDFLib.PDFDocument.create().then(function(out){ return out.embedPng(ab).then(function(png){ var pg=out.addPage([wpt,hpt]); pg.drawImage(png,{x:0,y:0,width:wpt,height:hpt}); return out.save(); }); }); }).then(function(bytes){ return cropSaveBlob(new Blob([bytes],{type:'application/pdf'}),filename); }).then(res,rej); },'image/png'); }); }); }
+function cropAddLog(name,fmt){ _cropCutCount++; var log=document.getElementById('cpLog'); if(_cropCutCount===1) log.innerHTML=''; var r=document.createElement('div'); r.className='r'; r.innerHTML='<span class="f '+fmt+'">'+fmt.toUpperCase()+'</span><span>'+esc(name)+'</span>'; log.insertBefore(r,log.firstChild); document.getElementById('cpLogCount').textContent='('+_cropCutCount+')'; }
+
+cropLoadSettings();
+cropInitSplitter();
+
 </script>
 </body>
 </html>
