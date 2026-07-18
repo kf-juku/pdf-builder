@@ -192,8 +192,15 @@ body{font-family:'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif;backgroun
 .cp-coltoggle{display:inline-flex;gap:3px;}
 .cp-coltoggle button{border:1px solid var(--border);background:#fff;color:var(--text-muted);border-radius:5px;padding:1px 7px;font-size:11px;cursor:pointer;font-family:inherit;}
 .cp-coltoggle button.on{background:var(--crimson-light);color:var(--crimson-dark);border-color:var(--crimson);}
-.cp-thumbs{flex:1;overflow-y:auto;padding:8px;display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--cp-lthumb,160px),1fr));gap:8px;align-content:start;}
-.cp-thumbs.cols2{grid-template-columns:1fr 1fr;gap:6px;}
+.cp-thumbs{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:12px;align-content:start;}
+.cp-file-head{position:sticky;top:0;z-index:3;display:flex;align-items:center;gap:6px;padding:5px 7px;background:#fff;border-radius:5px;border-left:4px solid var(--border);box-shadow:0 1px 0 var(--surface2);}
+.cp-file-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.cp-file-nm{font-weight:700;font-size:11px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0;}
+.cp-file-meta{font-size:10px;color:var(--text-muted);flex-shrink:0;}
+.cp-file-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--cp-lthumb,160px),1fr));gap:8px;align-content:start;}
+.cp-thumbs.cols2 .cp-file-grid{grid-template-columns:1fr 1fr;gap:6px;}
+.cp-clear-btn{border:1px solid var(--border);background:#fff;color:var(--text-muted);border-radius:5px;padding:1px 8px;font-size:11px;cursor:pointer;font-family:inherit;}
+.cp-clear-btn:hover{border-color:var(--crimson);color:var(--crimson-dark);}
 .cp-thumb{position:relative;border:2px solid var(--border);border-radius:6px;cursor:pointer;background:#fff;align-self:start;}
 .cp-thumb:hover{border-color:var(--crimson-mid,#f4a0a5);}
 .cp-thumb.active{border-color:var(--crimson);}
@@ -374,7 +381,10 @@ body{font-family:'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif;backgroun
 <div class="crop-panel" id="cropPanel">
   <div class="cp-pages" id="cpPages">
     <div class="cp-pages-head"><span>ページ</span>
+      <span style="display:inline-flex;gap:5px;align-items:center;">
+      <button class="cp-clear-btn" id="cpClearBtn" onclick="cropClearAll()" title="読み込んだPDFをすべて消します" style="display:none;">全消去</button>
       <span class="zoom-ctrl"><button class="zbtn" onclick="cropZoomThumb(-1)" title="小さく（並ぶ枚数を増やす）">−</button><button class="zbtn reset" onclick="cropZoomReset()" title="標準">標準</button><button class="zbtn" onclick="cropZoomThumb(1)" title="大きく（並ぶ枚数を減らす）">＋</button></span>
+      </span>
     </div>
     <div class="cp-thumbs" id="cpThumbs"></div>
   </div>
@@ -382,7 +392,7 @@ body{font-family:'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif;backgroun
   <div class="cp-work" id="cpWork">
     <div class="cp-work-bar">
       <button class="btn-primary" onclick="document.getElementById('cpFile').click()">📄 PDFを開く</button>
-      <input type="file" id="cpFile" accept="application/pdf" style="display:none" onchange="cropOnFilePick(event)">
+      <input type="file" id="cpFile" accept="application/pdf" multiple style="display:none" onchange="cropOnFilePick(event)">
       <span class="cp-zoom"><button onclick="cropZoom(-1)" title="縮小">🔍−</button><button onclick="cropZoom(0)" title="標準に戻す">標準</button><button onclick="cropZoom(1)" title="拡大">🔍＋</button></span>
       <span class="cp-pageinfo" id="cpPageInfo"></span>
     </div>
@@ -1365,7 +1375,9 @@ window.addEventListener('load',function(){
 
 
 /* ====== 切り出しタブ（cropタブ・統合とは完全に独立。pdfbuild_* は触らない） ====== */
-var _cropDoc=null,_cropBytes=null,_cropPageCount=0,_cropCur=0;
+var _cropFiles=[]; /* {name,bytes,doc,pageCount} */
+var _cropPages=[]; /* {fileIdx,pageInDoc} 全ファイルのページを平らに並べた一覧 */
+var _cropCur=-1;   /* _cropPages のindex（0始まり）。-1で未選択 */
 var _cropFitBase=1,_cropZoomStep=0,_cropPageWpt=0,_cropPageHpt=0;
 var _cropFmt='png',_cropDpi=300;
 var CROP_THUMB_MIN=72,CROP_THUMB_MAX=780,CROP_THUMB_FACTOR=1.2,CROP_THUMB_DEF=160;
@@ -1391,52 +1403,96 @@ function cropInitSplitter(){ var sp=document.getElementById('cpSplitter'), panel
 
 function cropOnShow(){ cropSetFmt(_cropFmt,true); cropSetDpi(_cropDpi,true); cropApplyUI(); cropUpdateNamePrev(); }
 
+function cropFileColor(fileIdx){ return FILE_COLORS[((fileIdx<0?0:fileIdx)%FILE_COLORS.length)]; }
+function cropFlatIndex(fileIdx,pno){ var base=0; for(var k=0;k<fileIdx;k++) base+=_cropFiles[k].pageCount; return base+(pno-1); }
+function cropCurEntry(){ return (_cropCur>=0 && _cropCur<_cropPages.length)?_cropPages[_cropCur]:null; }
+function cropUpdateClearBtn(){ var b=document.getElementById('cpClearBtn'); if(b) b.style.display=_cropFiles.length?'inline-flex':'none'; }
+
 function cropOnFilePick(e){ if(e.target.files&&e.target.files.length) cropAcceptFiles(e.target.files); e.target.value=''; }
 function cropAcceptFiles(fileList){
   var arr=Array.prototype.slice.call(fileList||[]);
-  var pdf=arr.filter(function(f){ return /\.pdf$/i.test(f.name)||f.type==='application/pdf'; })[0];
-  if(!pdf){ toast('PDFファイルを投げ入れてください'); return; }
-  var reader=new FileReader();
-  reader.onload=function(){ _cropBytes=new Uint8Array(reader.result); cropLoadPdf(_cropBytes.slice(0)); };
-  reader.onerror=function(){ toast('読み込みに失敗しました',3000); };
-  reader.readAsArrayBuffer(pdf);
-}
-function cropLoadPdf(bytes){
+  var pdfs=arr.filter(function(f){ return /\.pdf$/i.test(f.name)||f.type==='application/pdf'; });
+  if(pdfs.length===0){ toast('PDFファイルを投げ入れてください'); return; }
   showLoading('PDFを読み込み中…');
-  pdfjsLib.getDocument({data:bytes}).promise.then(function(doc){
-    _cropDoc=doc; _cropPageCount=doc.numPages;
-    var em=document.getElementById('cpEmpty'); if(em) em.style.display='none';
-    cropRenderThumbs(); cropSelectPage(1); hideLoading();
-    toast('全'+_cropPageCount+'ページを読み込みました');
-  }).catch(function(err){ hideLoading(); toast('読み込みに失敗しました',3000); console.warn('[crop]',err); });
+  var firstNewIdx=_cropPages.length; // 今回追加した最初のページのindex
+  var addedPages=0, i=0;
+  function next(){
+    if(i>=pdfs.length){
+      hideLoading();
+      var em=document.getElementById('cpEmpty'); if(em && _cropPages.length) em.style.display='none';
+      cropRenderThumbs(); cropUpdateClearBtn();
+      if(_cropCur<0 && _cropPages.length){ cropSelectPage(firstNewIdx<_cropPages.length?firstNewIdx:0); }
+      toast(addedPages>0 ? ('読み込みました（全'+_cropPages.length+'ページ / '+_cropFiles.length+'ファイル）') : '開けるPDFがありませんでした', addedPages>0?2000:3000);
+      return;
+    }
+    var f=pdfs[i++]; var reader=new FileReader();
+    reader.onload=function(){
+      var bytes=new Uint8Array(reader.result);
+      // pdf.js に渡すと元バッファが分離されることがあるので、書き出し用の bytes は残してコピーを渡す
+      pdfjsLib.getDocument({data:bytes.slice(0)}).promise.then(function(doc){
+        var fileIdx=_cropFiles.length;
+        _cropFiles.push({name:f.name,bytes:bytes,doc:doc,pageCount:doc.numPages});
+        for(var p=1;p<=doc.numPages;p++){ _cropPages.push({fileIdx:fileIdx,pageInDoc:p}); }
+        addedPages+=doc.numPages; next();
+      }).catch(function(err){ console.warn('[crop]',err); toast('開けませんでした：'+f.name,3000); next(); });
+    };
+    reader.onerror=function(){ toast('読み込み失敗：'+f.name,3000); next(); };
+    reader.readAsArrayBuffer(f);
+  }
+  next();
+}
+function cropClearAll(){
+  if(_cropFiles.length===0) return;
+  if(!confirm('読み込んだPDFをすべて消しますか？（切り出した一覧は残ります）')) return;
+  _cropFiles=[]; _cropPages=[]; _cropCur=-1; _cropSel=null;
+  var box=document.getElementById('cpThumbs'); if(box) box.innerHTML='';
+  var wrap=document.getElementById('cpCanvasWrap'); if(wrap) wrap.style.display='none';
+  var em=document.getElementById('cpEmpty'); if(em) em.style.display='';
+  var pi=document.getElementById('cpPageInfo'); if(pi) pi.textContent='';
+  var btn=document.getElementById('cpCutBtn'); if(btn) btn.disabled=true;
+  cropUpdateClearBtn();
+  toast('読み込んだPDFを消しました',1500);
 }
 function cropRenderThumbs(){
   var box=document.getElementById('cpThumbs'); if(!box) return Promise.resolve();
   box.innerHTML='';
   var chain=Promise.resolve();
-  for(var i=1;i<=_cropPageCount;i++){ (function(n){
-    chain=chain.then(function(){ return _cropDoc.getPage(n).then(function(page){
-      var vp=page.getViewport({scale:0.55});
-      var cv=document.createElement('canvas'); cv.width=vp.width; cv.height=vp.height;
-      return page.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise.then(function(){
-        var d=document.createElement('div'); d.className='cp-thumb'; d.id='cpThumb-'+n;
-        if(n===_cropCur) d.classList.add('active');
-        d.onclick=function(){ cropSelectPage(n); };
-        var img=document.createElement('img'); img.src=cv.toDataURL('image/png'); img.alt='ページ'+n; img.draggable=false;
-        d.appendChild(img);
-        var nm=document.createElement('span'); nm.className='n'; nm.textContent=n; d.appendChild(nm);
-        box.appendChild(d);
-      });
-    }); });
-  })(i); }
+  _cropFiles.forEach(function(file,fileIdx){
+    var color=cropFileColor(fileIdx);
+    var head=document.createElement('div'); head.className='cp-file-head'; head.style.borderLeftColor=color;
+    head.innerHTML='<span class="cp-file-dot" style="background:'+color+'"></span>'
+      +'<span class="cp-file-nm" title="'+esc(file.name)+'">'+esc(file.name)+'</span>'
+      +'<span class="cp-file-meta">'+file.pageCount+'ページ</span>';
+    box.appendChild(head);
+    var grid=document.createElement('div'); grid.className='cp-file-grid';
+    box.appendChild(grid);
+    for(var p=1;p<=file.pageCount;p++){ (function(pno){
+      var flatIdx=cropFlatIndex(fileIdx,pno);
+      chain=chain.then(function(){ return file.doc.getPage(pno).then(function(page){
+        var vp=page.getViewport({scale:0.55});
+        var cv=document.createElement('canvas'); cv.width=vp.width; cv.height=vp.height;
+        return page.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise.then(function(){
+          var d=document.createElement('div'); d.className='cp-thumb'; d.id='cpThumb-'+flatIdx;
+          if(flatIdx===_cropCur) d.classList.add('active');
+          d.onclick=function(){ cropSelectPage(flatIdx); };
+          var img=document.createElement('img'); img.src=cv.toDataURL('image/png'); img.alt='ページ'+pno; img.draggable=false;
+          d.appendChild(img);
+          var nm=document.createElement('span'); nm.className='n'; nm.textContent=pno; nm.style.background=color; d.appendChild(nm);
+          grid.appendChild(d);
+        });
+      }); });
+    })(p); }
+  });
   return chain;
 }
-function cropSelectPage(n){
-  if(!_cropDoc) return; _cropCur=n;
+function cropSelectPage(idx){
+  if(idx<0||idx>=_cropPages.length) return; _cropCur=idx;
+  var e=_cropPages[idx]; var doc=_cropFiles[e.fileIdx].doc;
   document.querySelectorAll('.cp-thumb').forEach(function(t){ t.classList.remove('active'); });
-  var th=document.getElementById('cpThumb-'+n); if(th){ th.classList.add('active'); th.scrollIntoView({block:'nearest'}); }
+  var th=document.getElementById('cpThumb-'+idx); if(th){ th.classList.add('active'); th.scrollIntoView({block:'nearest'}); }
+  var em=document.getElementById('cpEmpty'); if(em) em.style.display='none';
   showLoading('ページを表示中…');
-  _cropDoc.getPage(n).then(function(page){
+  doc.getPage(e.pageInDoc).then(function(page){
     var un=page.getViewport({scale:1}); _cropPageWpt=un.width; _cropPageHpt=un.height;
     var avail=(document.getElementById('cpCanvasScroll').clientWidth||760)-40;
     _cropFitBase=Math.min(avail/_cropPageWpt,2.0); _cropZoomStep=0; cropRenderMain();
@@ -1444,24 +1500,24 @@ function cropSelectPage(n){
 }
 function cropScale(){ return Math.max(0.2,_cropFitBase*Math.pow(1.25,_cropZoomStep)); }
 function cropRenderMain(){
-  if(!_cropDoc) return; showLoading('表示中…');
-  _cropDoc.getPage(_cropCur).then(function(page){
+  var e=cropCurEntry(); if(!e) return; var file=_cropFiles[e.fileIdx]; showLoading('表示中…');
+  file.doc.getPage(e.pageInDoc).then(function(page){
     var vp=page.getViewport({scale:cropScale()});
     var canvas=document.getElementById('cpCanvas'); canvas.width=vp.width; canvas.height=vp.height;
     document.getElementById('cpCanvasWrap').style.display='inline-block';
     cropClearSel();
-    var pi=document.getElementById('cpPageInfo'); if(pi) pi.textContent=_cropCur+' / '+_cropPageCount+' ページ';
+    var pi=document.getElementById('cpPageInfo'); if(pi) pi.textContent=file.name+' … '+e.pageInDoc+' / '+file.pageCount+' ページ';
     page.render({canvasContext:canvas.getContext('2d'),viewport:vp}).promise.then(function(){ hideLoading(); });
   });
 }
-function cropZoom(dir){ if(!_cropDoc) return; if(dir===0) _cropZoomStep=0; else _cropZoomStep=Math.max(-3,Math.min(6,_cropZoomStep+dir)); cropRenderMain(); }
+function cropZoom(dir){ if(_cropCur<0) return; if(dir===0) _cropZoomStep=0; else _cropZoomStep=Math.max(-3,Math.min(6,_cropZoomStep+dir)); cropRenderMain(); }
 
 (function(){
   var canvas=document.getElementById('cpCanvas'), box=document.getElementById('cpSel');
   if(!canvas||!box) return;
   var drawing=false,sx=0,sy=0;
   function toPx(ev){ var r=canvas.getBoundingClientRect(); return {x:(ev.clientX-r.left)*(canvas.width/r.width), y:(ev.clientY-r.top)*(canvas.height/r.height), dx:ev.clientX-r.left, dy:ev.clientY-r.top}; }
-  canvas.addEventListener('mousedown',function(ev){ if(!_cropDoc) return; drawing=true; var p=toPx(ev); sx=p.x; sy=p.y; box.dataset.sx=p.dx; box.dataset.sy=p.dy; box.style.display='block'; box.style.left=p.dx+'px'; box.style.top=p.dy+'px'; box.style.width='0px'; box.style.height='0px'; });
+  canvas.addEventListener('mousedown',function(ev){ if(_cropCur<0) return; drawing=true; var p=toPx(ev); sx=p.x; sy=p.y; box.dataset.sx=p.dx; box.dataset.sy=p.dy; box.style.display='block'; box.style.left=p.dx+'px'; box.style.top=p.dy+'px'; box.style.width='0px'; box.style.height='0px'; });
   window.addEventListener('mousemove',function(ev){ if(!drawing) return; var p=toPx(ev); var ax=+box.dataset.sx, ay=+box.dataset.sy; box.style.left=Math.min(ax,p.dx)+'px'; box.style.top=Math.min(ay,p.dy)+'px'; box.style.width=Math.abs(p.dx-ax)+'px'; box.style.height=Math.abs(p.dy-ay)+'px'; });
   window.addEventListener('mouseup',function(ev){ if(!drawing) return; drawing=false; var p=toPx(ev); var x0=Math.min(sx,p.x), y0=Math.min(sy,p.y), w=Math.abs(p.x-sx), h=Math.abs(p.y-sy); if(w<6||h<6){ cropClearSel(); return; } _cropSel={xpx:x0,ypx:y0,wpx:w,hpx:h}; var btn=document.getElementById('cpCutBtn'); if(btn) btn.disabled=false; var hh=document.getElementById('cpCutHint'); if(hh) hh.textContent='「'+cropPeek()+'」で切り出します'; });
 })();
@@ -1492,7 +1548,8 @@ function cropDoCut(){
   p.then(function(){ cropAddLog(base+'.'+_cropFmt,_cropFmt); document.getElementById('cpBaseName').value=cropNextName(base); cropUpdateNamePrev(); cropSaveSettings(); hideLoading(); toast('✅ '+base+'.'+_cropFmt+' を保存しました'); }).catch(function(err){ hideLoading(); console.warn('[crop]',err); toast('切り出しに失敗しました',3000); }).finally(function(){ if(_cropSel && btn) btn.disabled=false; });
 }
 function cropRenderRegion(scale,x0pt,yTop,wpt,hpt){
-  return _cropDoc.getPage(_cropCur).then(function(page){
+  var e=cropCurEntry(); var doc=_cropFiles[e.fileIdx].doc;
+  return doc.getPage(e.pageInDoc).then(function(page){
     var vp=page.getViewport({scale:scale});
     var full=document.createElement('canvas'); full.width=vp.width; full.height=vp.height;
     return page.render({canvasContext:full.getContext('2d'),viewport:vp}).promise.then(function(){
@@ -1503,7 +1560,7 @@ function cropRenderRegion(scale,x0pt,yTop,wpt,hpt){
   });
 }
 function cropExportPng(x0pt,yTop,wpt,hpt,dpi,filename){ return cropRenderRegion(dpi/72,x0pt,yTop,wpt,hpt).then(function(crop){ return new Promise(function(res){ crop.toBlob(function(b){ cropSaveBlob(b,filename).then(res); },'image/png'); }); }); }
-function cropExportPdfVector(x0pt,y0pt,wpt,hpt,filename){ return PDFLib.PDFDocument.load(_cropBytes).then(function(src){ return PDFLib.PDFDocument.create().then(function(out){ return out.copyPages(src,[_cropCur-1]).then(function(pgs){ var pg=pgs[0]; out.addPage(pg); var mb=pg.getMediaBox(); pg.setMediaBox(mb.x+x0pt,mb.y+y0pt,wpt,hpt); pg.setCropBox(mb.x+x0pt,mb.y+y0pt,wpt,hpt); return out.save().then(function(bytes){ return cropSaveBlob(new Blob([bytes],{type:'application/pdf'}),filename); }); }); }); }); }
+function cropExportPdfVector(x0pt,y0pt,wpt,hpt,filename){ var e=cropCurEntry(); var bytes=_cropFiles[e.fileIdx].bytes, pageIndex0=e.pageInDoc-1; return PDFLib.PDFDocument.load(bytes).then(function(src){ return PDFLib.PDFDocument.create().then(function(out){ return out.copyPages(src,[pageIndex0]).then(function(pgs){ var pg=pgs[0]; out.addPage(pg); var mb=pg.getMediaBox(); pg.setMediaBox(mb.x+x0pt,mb.y+y0pt,wpt,hpt); pg.setCropBox(mb.x+x0pt,mb.y+y0pt,wpt,hpt); return out.save().then(function(bytes){ return cropSaveBlob(new Blob([bytes],{type:'application/pdf'}),filename); }); }); }); }); }
 function cropExportPdfRaster(x0pt,yTop,wpt,hpt,filename){ return cropRenderRegion(300/72,x0pt,yTop,wpt,hpt).then(function(crop){ return new Promise(function(res,rej){ crop.toBlob(function(b){ b.arrayBuffer().then(function(ab){ return PDFLib.PDFDocument.create().then(function(out){ return out.embedPng(ab).then(function(png){ var pg=out.addPage([wpt,hpt]); pg.drawImage(png,{x:0,y:0,width:wpt,height:hpt}); return out.save(); }); }); }).then(function(bytes){ return cropSaveBlob(new Blob([bytes],{type:'application/pdf'}),filename); }).then(res,rej); },'image/png'); }); }); }
 function cropAddLog(name,fmt){ _cropCutCount++; var log=document.getElementById('cpLog'); if(_cropCutCount===1) log.innerHTML=''; var r=document.createElement('div'); r.className='r'; r.innerHTML='<span class="f '+fmt+'">'+fmt.toUpperCase()+'</span><span>'+esc(name)+'</span>'; log.insertBefore(r,log.firstChild); document.getElementById('cpLogCount').textContent='('+_cropCutCount+')'; }
 
